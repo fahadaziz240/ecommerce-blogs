@@ -43,7 +43,28 @@ public function login(){
         $this->form_validation
         ->set_rules('email', 'Email', 'required|trim|valid_email')
         ->set_rules('password', 'Password', 'required|trim');
-        
+        if ($this->form_validation->run()){
+            $user = [
+                'email' => $this->input->post('email'),
+                'password' => $this->input->post('password'),
+
+            ];
+
+            $userData = $this->db->select('id', 'email', 'first_name', 'last_name','level')
+            ->where($user)->get('users')->row();
+            if(is_object($userData)){
+                $newdata = [
+                    'logged'     =>  true,
+                    'user_id'    =>  $userData->id,
+                    'email'      =>  $userData->email,
+                    'first_name' =>  $userData->first_name,
+                    'last_name'  =>  $userData->last_name,
+                    'level'      =>  $userData->level
+
+                ];
+                $this->session->set_userData($newdata);
+            }
+        }
       
         $this->render('login', $viewData);
      
@@ -77,6 +98,7 @@ public function register(){
             if($insert){
             $newdata = [
                     'logged'     => true,
+                    'level'     => 0,
                     'user_id'    => $this->db->insert_id(),
                     'email'      => $data['email'],
                     'first_name' => $data['first_name'],
@@ -97,6 +119,9 @@ public function logout(){
     ]);
 
     redirect(base_url());
+
+    
+
 }
 
     

@@ -48,8 +48,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
        <?=$user['username']?>
       </button>
       <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-        <li><a href="#">Action</a></li>
-        <li><a href="#">Another action</a></li>
+        <?if($user['level']== 1):?>
+        <li><a href="#">Product</a></li>
+        <li><a href="#">Product</a></li>
+        <li><a href="#">Product</a></li>
+        <?endif;?>
         <div class="dropdown-divider"></div>
         <li><a class="dropdown-item" href="<?=base_url('home/logout')?>">Logout</a></li>
       </ul>
