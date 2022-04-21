@@ -87,10 +87,12 @@ public function register(){
             }
         }
 
-        $this->render('register', $viewData);~
+        $this->render('register', $viewData);
 }
 
-public fuction
+public function logout(){
+
+}
 
     
 public function add_item(){
