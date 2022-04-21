@@ -5,15 +5,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div class="row">
             <div class="col-6 offset-md-3 text-center">
             <h1 class="mb-3">Login</h1>
+            <?if(isset($error)):?>
+                <div class="alert alert-danger">
+                
+                </div>
+            <?endif;?>
             <?=validation_errors()?>
             <?=form_open(base_url('home/login')) ?>
                  <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" class="form-control" id="email" name="email" value="<?=set_value('email')?>">
+              <input type="email" class="form-control" placeholder="Email"
+               name="email" value="<?=set_value('email')?>">
             </div>     
             <div class="form-group">
-              <label for="password">Password</label>
-              <input type="password" class="form-control" id="password" name="password" value="<?=set_value('password')?>">
+              <input type="password" placeholder="Password" class="form-control" 
+              name="password" value="<?=set_value('password')?>">
             </div>
             <button type="submit" class="btn btn-block btn-primary">Enter</button>
             <?= form_close()?>
