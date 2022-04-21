@@ -92,6 +92,11 @@ public function register(){
 
 public function logout(){
 
+    $this->session->unset_userdata([
+        'logged' , 'user_id', 'email', 'first_name', 'last_name' 
+    ]);
+
+    redirect(base_url());
 }
 
     
