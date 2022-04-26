@@ -12,6 +12,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
   <link rel="stylesheet" href="<?= base_url('assets/css/bootstrap.min.css') ?>">
   <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+  <link href="<?= base_url('assets/font/css/open-iconic-bootstrap.css') ?>" rel=" stylesheet">
 
 
 </head>
@@ -73,3 +74,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
       </form>
     </div>
   </nav>
+  <?php if (isset($alert) && is_array($alert)) { ?>
+    <div class="container">
+      <div class="row">
+        <div class="col-6">
+          <div class="alert alert-<?php $alert['type'] ?>"><?php echo $alert['message'] ?></div>
+        </div>
+      </div>
+    </div>
+  <?php } ?>

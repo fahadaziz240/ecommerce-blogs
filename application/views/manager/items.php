@@ -3,6 +3,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
 ?>
 <div class="container">
     <div class="row">
+        <div class="col-12">
+            <h1>Products</h1>
+        </div>
         <table class="table">
             <thead>
                 <tr>
@@ -13,14 +16,21 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 </tr>
             </thead>
             <tbody>
-                <? foreach ($items as $item) : ?>
+                <?php foreach ($items as $item) { ?>
                     <tr>
-                        <th scope="row"><? $item->id ?></th>
-                        <td><? $item->title ?></td>
-                        <td><? $item->price ?></td>
-                        <td>@mdo</td>
+                        <th scope="row"><?php echo $item->id ?></th>
+                        <td><?php echo $item->title ?></td>
+                        <td><?php echo $item->price ?></td>
+                        <td>
+
+
+                            <a class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?');" href="<?= base_url('manager/delete_item/' . $item->id) ?>"><span class="oi oi-trash"></span>
+                            </a>
+                            <a class="btn btn-info" href="<?= base_url('manager/edit_item/' . $item->id) ?>"><span class="oi oi-pencil"></span></a>
+
+                        </td>
                     </tr>
-                <? endforeach; ?>
+                <?php } ?>
             </tbody>
         </table>
     </div>

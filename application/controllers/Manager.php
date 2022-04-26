@@ -30,7 +30,6 @@ class Manager extends CI_Controller
 
         $this->render('manager/items', $viewData);
     }
-
     public function add_item()
     {
 
@@ -56,9 +55,57 @@ class Manager extends CI_Controller
                 ];
 
                 $this->db->insert('items', $insertData);
+                $this->add_alert('success', 'New Item Successful added');
+                redirect(base_url('manager/items'));
             }
+            $this->render('manager/add_item', $viewData);
         }
-        $this->render('manager/add_item', $viewData);
+    }
+    public function edit_item($item_id)
+    {
+        $viewData = [];
+
+        $item = $this->db->where('id', $item_id)->get('items')->row();
+
+        if (!is_object($item)) {
+            show_404();
+        }
+        $this->load->helper('form');
+        $this->load->library('form_validation');
+
+        $this->form_validation
+            ->set_rules('title', 'Title', 'required|min_length[3]|max_length[30]')
+            ->set_rules('description', 'Description', 'required')
+            ->set_rules('price', 'Price', 'required|numeric|greater_than[0]');
+
+        if ($this->form_validation->run()) {
+            $upload = $this->do_upload();
+            $update = [
+                'title'         => $this->input->post('title'),
+                'description'   => $this->input->post('description'),
+                'price'         => $this->input->post('price'),
+                'image'         => $upload['data'],
+            ];
+            if (isset($upload['error'])) {
+                $viewData['error'] = $upload['error'];
+            } else {
+                $update['image'] = $upload['data'];
+            }
+            $this->db->where('id', $item_id)->update('items', $update);
+            $this->add_alert('Success', 'Items Successfully Updated');
+            redirect(base_url('manager/items'));
+        }
+        $viewData['items'] = $item;
+        $this->render('manager/edit_item', $viewData);
+    }
+    public function delete_item($item_id)
+    {
+        $item = $this->db->select('title')->where('id', $item_id)->get('items')->row();
+        if (is_object($item)) {
+            $this->db->delete('items', array('id' => $item_id));
+            $this->add_alert('success', 'item deleted successfully');
+        }
+        redirect(base_url('manager/items'));
     }
     public function add_category()
     {
@@ -76,6 +123,8 @@ class Manager extends CI_Controller
                 'title'  => $this->input->post('title')
             ];
             $this->db->insert('categories', $insertData);
+            $this->add_alert('success', 'New category Successful added');
+            redirect(base_url('manager/categories'));
         }
 
         $this->render('manager/add_category', $viewData);
@@ -98,7 +147,11 @@ class Manager extends CI_Controller
             return array('data' => $this->upload->data('file_name'));
         }
     }
-
+    private function add_alert($type, $message)
+    {
+        $alert = ['type' => $type, 'message' => $message];
+        $this->session->set_flashdata('alert', $alert);
+    }
     function render($page, $data = [])
     {
 
@@ -106,7 +159,8 @@ class Manager extends CI_Controller
         $userData = $this->session->userdata();
         $headerData = [
             'categories' => $categories,
-            'users'       => $this->userData,
+            'users'      => $this->userData,
+            'alert'      => $this->session->flashdata('alert')
 
         ];
         $this->load->view('inc/header', $headerData);
