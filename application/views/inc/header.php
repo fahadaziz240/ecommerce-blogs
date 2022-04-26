@@ -53,10 +53,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
             ?>
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <?php if ($this->session->level == 1) {
+            <?php if ($this->session->level >= 1) {
             ?>
               <a class="dropdown-item" href="<?php echo base_url('manager/items') ?>">Products</a>
               <a class="dropdown-item" href="<?php echo base_url('manager/categories') ?>">Categories</a>
+            <?php }
+            ?>
+            <?php if ($this->session->level == 2) {
+            ?>
+              <a class="dropdown-item" href="<?php echo base_url('manager/users') ?>">Users</a>
             <?php }
             ?>
             <div class="dropdown-divider"></div>

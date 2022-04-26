@@ -15,6 +15,69 @@ class Manager extends CI_Controller
             redirect(base_url());
         }
     }
+    public function users()
+    {
+        //requires 2 level for users
+        if ($this->userData['level'] < 2) {
+            redirect(base_url());
+        }
+        $viewData = [];
+        $start = (int)$this->input->get('per_page');
+        $limit = $this->config->item('per_page');
+        $viewData['items'] = $this->db->limit($limit, $start)->get('users')->result();
+        $this->pagination->initialize([
+            'base_url'      => base_url('manager/users'),
+            'total_rows'    => $this->db->count_all_results('users'),
+        ]);
+
+        $viewData['pagination'] = $this->pagination->create_links();
+
+        $this->render('manager/users', $viewData);
+    }
+    public function delete_user($id)
+    {
+        $item = $this->db->select('email')->where('id', $id)->get('users')->row();
+        if (is_object($item)) {
+            $this->db->delete('users', array('id' => $id));
+            $this->add_alert('success', 'User deleted successfully');
+        }
+        redirect(base_url('manager/users'));
+    }
+    public function edit_user($id)
+    {
+        $viewData = [];
+
+        $user = $this->db->where('id', $id)->get('users')->row();
+
+        if (!is_object($user)) {
+            show_404();
+        }
+        $this->load->helper('form');
+        $this->load->library('form_validation');
+
+        $this->form_validation
+            ->set_rules('email', 'Email', 'required|trim|valid_email|is_unique[users.email]')
+            ->set_rules('first_name', 'First Name', 'required|trim|min_length[2]|max_length[50]')
+            ->set_rules('last_name', 'Last Name', 'required|trim|min_length[2]|max_length[50]')
+            ->set_rules('password', 'Password', 'required|min_length[2]|max_length[50]');
+
+        if ($this->form_validation->run()) {
+            $upload = $this->do_upload();
+            $data = [
+                'email'         =>      $this->input->post('email'),
+                'first_name'    =>      $this->input->post('first_name'),
+                'last_name'     =>      $this->input->post('last_name'),
+                'password'      =>   md5(sha1($this->input->post('password'))),
+
+            ];
+
+            $this->db->where('id', $id)->update('items', $data);
+            $this->add_alert('Success', 'User Successfully Updated');
+            redirect(base_url('manager/user'));
+        }
+        $viewData['users'] = $user;
+        $this->render('manager/edit_user', $viewData);
+    }
     public function items()
     {
         $viewData = [];
@@ -32,7 +95,6 @@ class Manager extends CI_Controller
     }
     public function add_item()
     {
-
         $viewData = [];
         $this->load->helper('form');
         $this->load->library('form_validation');
@@ -58,8 +120,8 @@ class Manager extends CI_Controller
                 $this->add_alert('success', 'New Item Successful added');
                 redirect(base_url('manager/items'));
             }
-            $this->render('manager/add_item', $viewData);
         }
+        $this->render('manager/add_item', $viewData);
     }
     public function edit_item($item_id)
     {
@@ -107,9 +169,23 @@ class Manager extends CI_Controller
         }
         redirect(base_url('manager/items'));
     }
+    public function categories()
+    {
+        $viewData = [];
+        $start = (int)$this->input->get('per_page');
+        $limit = $this->config->item('per_page');
+        $viewData['items'] = $this->db->limit($limit, $start)->get('categories')->result();
+        $this->pagination->initialize([
+            'base_url'      => base_url('manager/categories'),
+            'total_rows'    => $this->db->count_all_results('categories'),
+        ]);
+
+        $viewData['pagination'] = $this->pagination->create_links();
+
+        $this->render('manager/categories', $viewData);
+    }
     public function add_category()
     {
-
         $viewData = [];
 
         $this->load->helper('form');
@@ -128,6 +204,40 @@ class Manager extends CI_Controller
         }
 
         $this->render('manager/add_category', $viewData);
+    }
+    public function edit_category($id)
+    {
+        $viewData = [];
+        $item = $this->db->where('id', $id)->get('items')->row();
+
+        if (!is_object($item)) {
+            show_404();
+        }
+        $this->load->helper('form');
+        $this->load->library('form_validation');
+
+        $this->form_validation
+            ->set_rules('title', 'Title', 'required|min_length[3]|max_length[30]');
+
+        if ($this->form_validation->run()) {
+            $data = [
+                'title'  => $this->input->post('title')
+            ];
+            $this->db->where('id', $id)->update('categories', $data);
+            $this->add_alert('success', 'Category updated successfully');
+            redirect(base_url('manager/categories'));
+        }
+        $viewData['item'] = $item;
+        $this->render('manager/edit_category', $viewData);
+    }
+    public function delete_category($id)
+    {
+        $item = $this->db->select('title')->where('id', $id)->get('categories')->row();
+        if (is_object($item)) {
+            $this->db->delete('categories', array('id' => $id));
+            $this->add_alert('success', 'Category deleted successfully');
+        }
+        redirect(base_url('manager/categories'));
     }
     function do_upload()
     {

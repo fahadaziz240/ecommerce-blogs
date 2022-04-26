@@ -5,9 +5,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
   <div class="row">
     <div class="col-6">
       <h1>Edit Items</h1>
-      <?php if (isset($success)) { ?>
-        <div class="alert alert-success"><?php echo $success ?></div>
-      <?php } ?>
+
       <?= isset($error) ? $error : '' ?>
       <?= validation_errors() ?>
       <?= form_open_multipart(base_url('manager/edit_item/' . $items->id)) ?>
