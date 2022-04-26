@@ -67,13 +67,21 @@ class Manager extends CI_Controller
                 'email'         =>      $this->input->post('email'),
                 'first_name'    =>      $this->input->post('first_name'),
                 'last_name'     =>      $this->input->post('last_name'),
-                'password'      =>   md5(sha1($this->input->post('password'))),
+                'level'         =>      $this->input->post('level'),
+
 
             ];
 
-            $this->db->where('id', $id)->update('items', $data);
+            $password = $this->input->post('password');
+            if ($password) {
+                $data = [
+                    'password'      =>   md5(sha1($this->input->post('password'))),
+                ];
+            }
+
+            $this->db->where('id', $id)->update('users', $data);
             $this->add_alert('Success', 'User Successfully Updated');
-            redirect(base_url('manager/user'));
+            redirect(base_url('manager/users'));
         }
         $viewData['users'] = $user;
         $this->render('manager/edit_user', $viewData);
