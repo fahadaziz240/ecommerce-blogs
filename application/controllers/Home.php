@@ -10,7 +10,6 @@ class Home extends CI_Controller
         parent::__construct();
         $this->userData = $this->session->userdata();
     }
-
     public function index($category_id = 0)
     {
         $viewData = [];
@@ -35,7 +34,57 @@ class Home extends CI_Controller
 
         $this->render('home', $viewData);
     }
-
+    public function add_cart($item_id)
+    {
+        if (!isset($this->userData['logged'])) {
+            $this->add_alert('Warning', 'you must login Fisrt');
+            redirect(base_url('login'));
+        } else {
+        }
+        $item = $this->db->where('id', $item_id)->get('items')->row();
+        if (!is_object($item)) {
+            show_404();
+        }
+        $this->userData['cart'][] = $item_id;
+        $this->session->set_userData('cart', $this->userData['cart']);
+        $this->add_alert('success', 'Product Successfully added to cart');
+        redirect(base_url('cart'));
+    }
+    public function cart()
+    {
+        if (!isset($this->userData['logged'])) {
+            redirect(base_url('login'));
+        }
+        $delete = $this->input->get('del');
+        if ($delete) {
+            unset($this->userData['cart'][$delete - 1]);
+            $this->session->set_userData('cart', $this->userData['cart']);
+            $this->add_alert('success', 'successfully deleted');
+            redirect(base_url('cart'));
+        }
+        $data = ['total' => 0];
+        foreach ($this->userData['cart'] as $key => $item_id) {
+            $item = $this->db->where('id', $item_id)->get('items')->row();
+            $data['items'][$key] = $item;
+            $data['total'] += $item->price;
+        }
+        $this->render('cart', $data);
+    }
+    public function checkout()
+    {
+        if (!isset($this->userData['cart']) || !is_array($this->userData['cart'])) {
+            $this->add_alert('success', 'your cart is empty');
+            redirect(base_url());
+        }
+        $this->load->helper('form');
+        $data = ['total' => 0];
+        foreach ($this->userData['cart'] as $key => $item_id) {
+            $item = $this->db->where('id', $item_id)->get('items')->row();
+            $data['items'][$key] = $item;
+            $data['total'] += $item->price;
+        }
+        $this->render('checkout');
+    }
     public function login()
     {
         if (isset($this->userData['logged'])) {
@@ -66,7 +115,7 @@ class Home extends CI_Controller
                     'last_name'  =>  $userData->last_name,
                     'level'      =>  $userData->level
                 ];
-
+                $newdata['cart'] = isset($this->userData['cart']) ? $this->userData['cart'] : [];
                 $this->session->set_userData($newdata);
 
                 redirect(base_url());
@@ -77,7 +126,6 @@ class Home extends CI_Controller
 
         $this->render('login', $viewData);
     }
-
     public function register()
     {
         if (isset($this->userData['logged'])) {
@@ -115,6 +163,7 @@ class Home extends CI_Controller
                     'first_name' => $data['first_name'],
                     'last_name'  => $data['last_name'],
                 ];
+                $newdata['cart'] = isset($this->userData['cart']) ? $this->userData['cart'] : [];
                 $this->session->set_userdata($newdata);
                 $viewData['success'] = true;
             }
@@ -122,13 +171,17 @@ class Home extends CI_Controller
 
         $this->render('register', $viewData);
     }
-
     public function logout()
     {
 
         $this->session->unset_userdata(['logged', 'user_id', 'email', 'first_name', 'last_name']);
 
         redirect(base_url());
+    }
+    private function add_alert($type, $message)
+    {
+        $alert = ['type' => $type, 'message' => $message];
+        $this->session->set_flashdata('alert', $alert);
     }
     function render($page, $data = [])
     {
@@ -138,7 +191,7 @@ class Home extends CI_Controller
         $headerData = [
             'categories' => $categories,
             'users'      => $this->userData,
-
+            'alert'      => $this->session->flashdata('alert')
         ];
 
         $this->load->view('inc/header', $headerData);

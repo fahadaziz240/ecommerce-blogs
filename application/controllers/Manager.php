@@ -56,9 +56,10 @@ class Manager extends CI_Controller
         $this->load->library('form_validation');
 
         $this->form_validation
-            ->set_rules('email', 'Email', 'required|trim|valid_email|is_unique[users.email]')
+            ->set_rules('email', 'Email', 'required|trim|valid_email')
             ->set_rules('first_name', 'First Name', 'required|trim|min_length[2]|max_length[50]')
             ->set_rules('last_name', 'Last Name', 'required|trim|min_length[2]|max_length[50]')
+            ->set_rules('level', 'Level', 'required|trim|numeric')
             ->set_rules('password', 'Password', 'required|min_length[2]|max_length[50]');
 
         if ($this->form_validation->run()) {
@@ -69,9 +70,7 @@ class Manager extends CI_Controller
                 'last_name'     =>      $this->input->post('last_name'),
                 'level'         =>      $this->input->post('level'),
 
-
             ];
-
             $password = $this->input->post('password');
             if ($password) {
                 $data = [

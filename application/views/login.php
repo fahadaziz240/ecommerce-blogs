@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 <div class="container">
     <div class="row">
         <div class="col-6 offset-md-3 text-center">
-            <h1 class="mb-3">Login</h1>
+            <h1 class="mb-3 py-5">Login</h1>
             <?php if (isset($error)) { ?>
                 <div class="alert alert-danger"><?php echo $error ?></div>
             <?php } ?>

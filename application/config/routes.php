@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------------
@@ -54,3 +54,10 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
 $route['category/(:num)'] = 'home/index/$1';
+$route['login'] = 'home/login';
+$route['cart'] = 'home/cart';
+
+$route['checkout'] = 'home/checkout';
+
+$route['register'] = 'home/register';
+$route['add/(:num)'] = 'home/add_cart/$1';

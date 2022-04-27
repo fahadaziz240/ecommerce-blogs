@@ -5,9 +5,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
   <div class="row">
     <div class="col-6">
       <h1>Edit User</h1>
-      <?= isset($error) ? $error : '' ?>
       <?= validation_errors() ?>
-      <?= form_open_multipart(base_url('manager/edit_user/' . $users->id)) ?>
+      <?= form_open(base_url('manager/edit_user/' . $users->id)) ?>
       <div class="form-group">
         <label for="email">Email</label>
         <input type="emial" class="form-control" id="emial" name="email" value="<?= set_value('email', $users->email) ?>">

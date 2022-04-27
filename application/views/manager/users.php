@@ -23,8 +23,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <td><?php echo $item->email ?></td>
                         <td><?php echo $item->first_name ?><?php echo $item->last_name ?></td>
                         <td>
-
-
                             <a class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');" href="<?= base_url('manager/delete_user/' . $item->id) ?>"><span class="oi oi-trash"></span>
                             </a>
                             <a class="btn btn-info" href="<?= base_url('manager/edit_user/' . $item->id) ?>"><span class="oi oi-pencil"></span></a>
