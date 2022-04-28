@@ -68,22 +68,78 @@ class Home extends CI_Controller
             $data['items'][$key] = $item;
             $data['total'] += $item->price;
         }
+
         $this->render('cart', $data);
     }
     public function checkout()
     {
         if (!isset($this->userData['cart']) || !is_array($this->userData['cart'])) {
-            $this->add_alert('success', 'your cart is empty');
+            $this->add_alert('warning', 'your cart is empty');
             redirect(base_url());
         }
         $this->load->helper('form');
+        $this->load->library('form_validation');
+        $this->form_validation
+            ->set_rules('firstname', 'First name', 'trim|required')
+            ->set_rules('lastname', 'Last name', 'trim|required')
+            ->set_rules('address', 'Address', 'trim|required')
+            ->set_rules('address_e', 'Address 2', 'trim')
+            ->set_rules('zip', 'Zip', 'trim|required')
+            ->set_rules('country', 'Country', 'trim|required')
+            ->set_rules('state', 'State', 'trim|required')
+            ->set_rules('payementmethod', 'Payement method', 'trim|required');
+
         $data = ['total' => 0];
         foreach ($this->userData['cart'] as $key => $item_id) {
             $item = $this->db->where('id', $item_id)->get('items')->row();
             $data['items'][$key] = $item;
             $data['total'] += $item->price;
         }
-        $this->render('checkout');
+
+        if ($this->form_validation->run()) {
+            $orderData = [
+                'firstname' => $this->input->post('firstname'),
+                'lastname' => $this->input->post('lastname'),
+                'address' => $this->input->post('address'),
+                'address_e' => $this->input->post('address_e'),
+                'zip' => $this->input->post('zip'),
+                'country' => $this->input->post('country'),
+                'state' => $this->input->post('state'),
+                'payementmethod' => $this->input->post('payementmethod'),
+                'user_id' => $this->userData['user_id'],
+            ];
+
+            $this->db->insert('order', $orderData);
+            $order_id = $this->db->insert_id('order_items');
+            if ($order_id) {
+                foreach ($data['items'] as $item) {
+                    $this->db->insert('order_items', [
+                        'order_id' => $order_id,
+                        'item_id' => $item->id,
+                        'title' => $item->title,
+                        'price' => $item->price
+
+                    ]);
+                }
+                $this->userData['cart'] = [];
+                $this->session->set_userData('cart', $this->userData['cart']);
+                $this->add_alert('success', 'You order successfully confirmed');
+                redirect(base_url('orders'));
+            } else {
+                $this->add_alert('danger', 'Error on system. Please contact admin');
+            }
+        }
+
+        $data['user'] = $this->userData;
+        $data['country'] = json_decode(file_get_contents('./assets/country.json'), true);
+
+        $this->render('checkout', $data);
+    }
+    public function order()
+    {
+        if (!isset($this->userData['logged'])) {
+            redirect(base_url('login'));
+        }
     }
     public function login()
     {
@@ -185,7 +241,6 @@ class Home extends CI_Controller
     }
     function render($page, $data = [])
     {
-
         $categories = $this->db->get('categories')->result();
         $user = $this->session->userdata();
         $headerData = [
@@ -193,7 +248,6 @@ class Home extends CI_Controller
             'users'      => $this->userData,
             'alert'      => $this->session->flashdata('alert')
         ];
-
         $this->load->view('inc/header', $headerData);
         $this->load->view($page, $data);
         $this->load->view('inc/footer');

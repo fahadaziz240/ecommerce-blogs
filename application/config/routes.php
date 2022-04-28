@@ -58,6 +58,8 @@ $route['login'] = 'home/login';
 $route['cart'] = 'home/cart';
 
 $route['checkout'] = 'home/checkout';
+$route['orders'] = 'home/orders';
+
 
 $route['register'] = 'home/register';
 $route['add/(:num)'] = 'home/add_cart/$1';
