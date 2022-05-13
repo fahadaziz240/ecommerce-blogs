@@ -40,15 +40,16 @@ class Home extends CI_Controller
             $this->add_alert('Warning', 'you must login Fisrt');
             redirect(base_url('login'));
         } else {
+
+            $item = $this->db->where('id', $item_id)->get('items')->row();
+            if (!is_object($item)) {
+                show_404();
+            }
+            $this->userData['cart'][] = $item_id;
+            $this->session->set_userData('cart', $this->userData['cart']);
+            $this->add_alert('success', 'Product Successfully added to cart');
+            redirect(base_url('cart'));
         }
-        $item = $this->db->where('id', $item_id)->get('items')->row();
-        if (!is_object($item)) {
-            show_404();
-        }
-        $this->userData['cart'][] = $item_id;
-        $this->session->set_userData('cart', $this->userData['cart']);
-        $this->add_alert('success', 'Product Successfully added to cart');
-        redirect(base_url('cart'));
     }
     public function cart()
     {
@@ -58,7 +59,7 @@ class Home extends CI_Controller
         $delete = $this->input->get('del');
         if ($delete) {
             unset($this->userData['cart'][$delete - 1]);
-            $this->session->set_userData('cart', $this->userData['cart']);
+            $this->session->set_userdata('cart', $this->userData['cart']);
             $this->add_alert('success', 'successfully deleted');
             redirect(base_url('cart'));
         }
@@ -79,15 +80,25 @@ class Home extends CI_Controller
         }
         $this->load->helper('form');
         $this->load->library('form_validation');
+        // var_dump($_POST['firstname']);
+        // var_dump($_POST['lastname']);
+        // var_dump($_POST['address']);
+        // var_dump($_POST['address2']);
+        // var_dump($_POST['country']);
+        // var_dump($_POST['state']);
+        // var_dump($_POST['zip']);
+        // var_dump($_POST['payment']);
+
+        // exit;
         $this->form_validation
-            ->set_rules('firstname', 'First name', 'trim|required')
-            ->set_rules('lastname', 'Last name', 'trim|required')
+            ->set_rules('firstname', 'First Name', 'trim|required')
+            ->set_rules('lastname', 'Last Name', 'trim|required')
             ->set_rules('address', 'Address', 'trim|required')
-            ->set_rules('address_e', 'Address 2', 'trim')
-            ->set_rules('zip', 'Zip', 'trim|required')
-            ->set_rules('country', 'Country', 'trim|required')
+            ->set_rules('address2', 'Address 2', 'trim')
+            ->set_rules('country', 'Country', 'required')
             ->set_rules('state', 'State', 'trim|required')
-            ->set_rules('payementmethod', 'Payement method', 'trim|required');
+            ->set_rules('zip', 'Zip', 'trim|required')
+            ->set_rules('payment', 'payment', 'trim|required');
 
         $data = ['total' => 0];
         foreach ($this->userData['cart'] as $key => $item_id) {
@@ -95,21 +106,22 @@ class Home extends CI_Controller
             $data['items'][$key] = $item;
             $data['total'] += $item->price;
         }
-
         if ($this->form_validation->run()) {
             $orderData = [
-                'firstname' => $this->input->post('firstname'),
-                'lastname' => $this->input->post('lastname'),
-                'address' => $this->input->post('address'),
-                'address_e' => $this->input->post('address_e'),
-                'zip' => $this->input->post('zip'),
-                'country' => $this->input->post('country'),
-                'state' => $this->input->post('state'),
-                'payementmethod' => $this->input->post('payementmethod'),
+                'first_name' => $this->input->post['firstname'],
+                'last_name' => $this->input->post['lastname'],
+                'address' => $this->input->post['address'],
+                'address_e' => $this->input->post['address2'],
+                'zip' => $this->input->post['zip'],
+                'country' => $this->input->post['country'],
+                'state' => $this->input->post['state'],
+                'payment' => $this->input->post['payment'],
                 'user_id' => $this->userData['user_id'],
+                'price' => $data['total'],
             ];
 
-            $this->db->insert('order', $orderData);
+
+            $this->db->insert('orders', $orderData);
             $order_id = $this->db->insert_id('order_items');
             if ($order_id) {
                 foreach ($data['items'] as $item) {
@@ -130,16 +142,120 @@ class Home extends CI_Controller
             }
         }
 
-        $data['user'] = $this->userData;
+        $data['users'] = $this->userData;
         $data['country'] = json_decode(file_get_contents('./assets/country.json'), true);
 
         $this->render('checkout', $data);
     }
-    public function order()
+
+    public function checkout_post()
+    {
+
+        die(json_encode($this->input));
+
+        if (!isset($this->userData['cart']) || !is_array($this->userData['cart'])) {
+            $this->add_alert('warning', 'your cart is empty');
+            redirect(base_url());
+        }
+        $this->load->library('form_validation');
+
+        $this->form_validation
+            ->set_rules('firstname ', 'First Name', 'trim|required')
+            ->set_rules('lastname', 'Last Name', 'trim|required')
+            ->set_rules('address', 'Address', 'trim|required')
+            ->set_rules('address_e', 'Address 2', 'trim')
+            ->set_rules('country', 'Country', 'trim|required')
+            ->set_rules('state', 'State', 'trim|required')
+            ->set_rules('zip', 'Zip', 'trim|required')
+            ->set_rules('payementmethod', 'payementmethod', 'trim|required');
+
+        $data = ['total' => 0];
+        foreach ($this->userData['cart'] as $key => $item_id) {
+            $item = $this->db->where('id', $item_id)->get('items')->row();
+            $data['items'][$key] = $item;
+            $data['total'] += $item->price;
+        }
+        if ($this->form_validation->run()) {
+            $orderData = [
+                'first_name' => $this->input->post('firstname'),
+                'last_name' => $this->input->post('lastname'),
+                'address' => $this->input->post('address'),
+                'address_e' => $this->input->post('address_e'),
+                'zip' => $this->input->post('zip'),
+                'country' => $this->input->post('country'),
+                'state' => $this->input->post('state'),
+                'payementmethod' => $this->input->post('payementmethod'),
+                'user_id' => $this->userData['user_id'],
+                'price' => $data['total'],
+            ];
+
+
+
+            $this->db->insert('orders', $orderData);
+            $order_id = $this->db->insert_id('order_items');
+            if ($order_id) {
+                foreach ($data['items'] as $item) {
+                    $this->db->insert('order_items', [
+                        'order_id' => $order_id,
+                        'item_id' => $item->id,
+                        'title' => $item->title,
+                        'price' => $item->price
+
+                    ]);
+                }
+                $this->userData['cart'] = [];
+                $this->session->set_userData('cart', $this->userData['cart']);
+                $this->add_alert('success', 'You order successfully confirmed');
+                redirect(base_url('orders'));
+            } else {
+                $this->add_alert('danger', 'Error on system. Please contact admin');
+            }
+        }
+        $data['users'] = $this->userData;
+
+        $data['country'] = json_decode(file_get_contents('./assets/country.json'), true);
+
+        $this->render('checkout', $data);
+    }
+
+    public function orders()
     {
         if (!isset($this->userData['logged'])) {
             redirect(base_url('login'));
         }
+        $start = (int)$this->input->get('per_page');
+        $limit = $this->config->item('per_page');
+
+        $this->pagination->initialize([
+            'base_url'      => base_url('orders'),
+            'total_rows'    => $this->db->where('user_id', $this->userData['user_id'])->count_all_results('orders'),
+        ]);
+        $data = [
+            'items' => $this->db->where('user_id', $this->userData['user_id'])->limit($limit, $start)->get('orders')->result(),
+            'pagination' => $this->pagination->create_links(),
+        ];
+
+        $this->render('orders', $data);
+    }
+    public function order_detail($order_id)
+    {
+        $where = ['user_id' => $this->userData['user_id'], 'id' => $order_id];
+        $order = $this->db->where($where)->get('orders')->row();
+        if (!$order) {
+            show_404();
+        }
+        $items = $this->db->select('o.item_id,o.title,o.price')
+            ->from('order_items o')
+            ->join('items i', 'i.id=o.item_id')
+            ->where('o.order_id', $order_id)
+            ->get()->result();
+
+        $data = [
+            'orders' => $order,
+            'items' => $items,
+        ];
+
+        $this->load->view('order_detail', $data);
     }
     public function login()
     {
@@ -172,8 +288,7 @@ class Home extends CI_Controller
                     'level'      =>  $userData->level
                 ];
                 $newdata['cart'] = isset($this->userData['cart']) ? $this->userData['cart'] : [];
-                $this->session->set_userData($newdata);
-
+                $this->session->set_userdata($newdata);
                 redirect(base_url());
             } else {
                 $viewData['error'] = 'Login or Passsword incorrect';
@@ -224,13 +339,14 @@ class Home extends CI_Controller
                 $viewData['success'] = true;
             }
         }
-
         $this->render('register', $viewData);
     }
     public function logout()
     {
 
-        $this->session->unset_userdata(['logged', 'user_id', 'email', 'first_name', 'last_name']);
+        $this->session->unset_userdata([
+            'logged', 'user_id', 'email', 'first_name', 'last_name'
+        ]);
 
         redirect(base_url());
     }
@@ -239,13 +355,13 @@ class Home extends CI_Controller
         $alert = ['type' => $type, 'message' => $message];
         $this->session->set_flashdata('alert', $alert);
     }
-    function render($page, $data = [])
+    private function render($page, $data = [])
     {
         $categories = $this->db->get('categories')->result();
         $user = $this->session->userdata();
         $headerData = [
             'categories' => $categories,
-            'users'      => $this->userData,
+            'user'      => $this->userData,
             'alert'      => $this->session->flashdata('alert')
         ];
         $this->load->view('inc/header', $headerData);

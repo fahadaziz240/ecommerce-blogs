@@ -34,7 +34,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <h2>Total :</h2>
                     </div>
                     <div class="col-4">
-                        <h4><?= $total ?> USD</h4>
+                        <h4><?php echo $total ?> USD</h4>
                     </div>
                 </div>
                 <div class="row">

@@ -11,10 +11,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
             <?php echo validation_errors() ?>
             <?php echo form_open(base_url('home/login')) ?>
             <div class="form-group">
-                <input type="email" class="form-control" required placeholder="Email" name="email" value="<?php echo set_value('email') ?>">
+                <input type="email" class="form-control" required placeholder="Email" name="email" value="">
             </div>
             <div class="form-group">
-                <input type="password" placeholder="Password" required class="form-control" name="password" value="<?php echo set_value('password') ?>">
+                <input type="password" placeholder="Password" required class="form-control" name="password" value="">
             </div>
             <button type="submit" class="btn btn-block btn-primary">Login</button>
             <?php echo form_close() ?>

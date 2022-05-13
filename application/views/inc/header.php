@@ -9,10 +9,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <link rel="stylesheet" href="<?= base_url('assets/css/bootstrap.min.css') ?>">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/bootstrap.min.css">
 
-  <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
-  <link href="<?= base_url('assets/font/css/open-iconic-bootstrap.css') ?>" rel=" stylesheet">
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/style.css">
+  <link href="<?= base_url(); ?>assets/font/css/open-iconic-bootstrap.css" rel=" stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
 </head>
@@ -53,7 +55,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
             ?>
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="<?php echo base_url('cart') ?>">Shopping Cart</a>
+            <a class="dropdown-item" href="<?php echo base_url(); ?>cart">Shopping Cart</a>
+            <a class="dropdown-item" href="<?php echo base_url(); ?>home/orders">My orders</a>
+
             <?php if ($this->session->level >= 1) {
             ?>
               <a class="dropdown-item" href="<?php echo base_url('manager/items') ?>">Products</a>
