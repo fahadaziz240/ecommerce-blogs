@@ -20,9 +20,10 @@ class product extends CI_Controller
         $this->load->vars($data);
         $this->load->view('main_page');
     }
+
     public function product($id)
     {
-        $data["filename"] = CONTENT . 'product/single';
+        $data["filename"] = CONTENT . 'product/product_detail';
 
         $productObj = $this->product_model->get_product_by_id($id);
         $data["all_products"] = [];
