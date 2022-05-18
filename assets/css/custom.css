@@ -1,0 +1,54 @@
+.card img.card-img-top {
+    height: 250px;
+    width: auto;
+    max-width: 100%;
+    margin: auto;
+}
+
+body {
+    background: #f8f9fa;
+}
+
+.pro_title {
+    color: #555;
+}
+
+.price {
+    color: #fe980f;
+    font-size: 26px;
+    padding-top: 20px;
+}
+
+.inputfield {
+    border: 1px solid #ccc;
+    font-weight: bold;
+    height: 33px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.cart {
+    color: #fe980f;
+    font-size: 15px;
+    background: #f4f1de;
+    border: 1px solid grey;
+}
+
+.p-desc {
+    color: grey;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.p-text {
+    font-family: roboto;
+    font-size: 15px;
+}
+
+/* quatity plus minus css */
+.center {
+    width: 150px;
+    margin: 40px auto;
+
+}
