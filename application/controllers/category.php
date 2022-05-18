@@ -33,7 +33,6 @@ class Category extends CI_Controller
             $data["all_products"] = $categoryObj["data"];
         }
 
-
         $this->load->vars($data);
         $this->load->view('main_page');
     }
