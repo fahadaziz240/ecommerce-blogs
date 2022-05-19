@@ -36,11 +36,17 @@ class Product_model extends CI_Model
         $data = $query->result_array();
         return array("success" => true, "message" => "Success", "data" => $data);
     }
-    public function get_product_limit()
-    {
 
-        $this->db->order_by('title', 'desc');
-        $this->db->limit(3);
+
+    public function get_products_query($where = "", $orderBy = [], $limit = 3)
+    {
+        if ($where) {
+            $this->db->where($where);
+        }
+        if (count($orderBy) == 2) {
+            $this->db->order_by($orderBy[0], $orderBy[1]);
+        }
+        $this->db->limit($limit);
         $query = $this->db->get('product');
 
         $data = $query->result_array();

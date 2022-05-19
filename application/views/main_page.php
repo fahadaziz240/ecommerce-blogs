@@ -3,7 +3,9 @@
 
 $this->load->view("header/header.php");
 $this->load->view("nav/nav.php");
-
+if (!isset($alert) and isset($this->session->flashdata()["alert"])) {
+    $alert = $this->session->flashdata("alert");
+}
 if (isset($alert)) {
     $alertObj = json_decode($alert);
 

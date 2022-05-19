@@ -18,7 +18,7 @@ class category_model extends CI_Model
 
     public function get_category_limit()
     {
-        $this->db->order_by('title', 'desc');
+        $this->db->order_by('title', 'ASC');
         $this->db->limit(3, 0);
         $query = $this->db->get('category');
 

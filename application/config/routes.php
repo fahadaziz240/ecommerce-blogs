@@ -59,6 +59,9 @@ $route['category/(:any)/products'] = "category/products/$1";
 $route['product'] = "product";
 $route['product/(:any)'] = "product/product/$1";
 
+$route['cart/add_to_cart'] = "cart/add_to_cart";
+$route['cart'] = "cart/cart";
+
 
 // $route['product'] = "product";
 // $route['product/(:any)'] = 'product/index/$1';

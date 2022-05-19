@@ -9,7 +9,7 @@ class Category extends CI_Controller
     }
     public function index()
     {
-        $data["filename"] = CONTENT . 'category/index';
+        $data["filename"] = CONTENT . 'category';
 
         $categoryObj = $this->category_model->get_category();
 
@@ -24,7 +24,7 @@ class Category extends CI_Controller
 
     public function products($cat_id)
     {
-        $data["filename"] = CONTENT . 'product/index';
+        $data["filename"] = CONTENT . 'product';
 
         $categoryObj = $this->product_model->get_products_by_category($cat_id);
 
