@@ -6,7 +6,7 @@ class login extends CI_Controller
         if (isset($this->session->userdata['username']) && isset($this->session->userdata['email'])) {
             redirect(base_url('home'));
         }
-        $data["filename"] = 'login';
+        $data["filename"] = 'login/index';
         $this->load->vars($data);
         $this->load->view('main_page');
     }
