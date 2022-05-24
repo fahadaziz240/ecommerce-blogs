@@ -53,14 +53,24 @@ $route['default_controller'] = 'home';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
-$route['category'] = "category";
+$route['register'] = "register";
+$route['login'] = 'login';
+$route['logout'] = 'logout';
+
+
+$route['category'] = "get_category";
 $route['category/(:any)/products'] = "category/products/$1";
 
 $route['product'] = "product";
 $route['product/(:any)'] = "product/product/$1";
 
 $route['cart/add_to_cart'] = "cart/add_to_cart";
-$route['cart'] = "cart/cart";
+$route['cart'] = 'cart';
+
+$route['checkout'] = "checkout";
+
+
+
 
 
 // $route['product'] = "product";

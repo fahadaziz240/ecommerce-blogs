@@ -1,18 +1,32 @@
 <?php
-class cart extends CI_Model
+class cart_model extends CI_Model
 {
-    public function index()
+    public function get_all_cart_items()
     {
-        $data["filename"] = CONTENT . 'product';
-
-        $categoryObj = $this->cart_model->cart();
-
-        $data["all_cart"] = [];
-        if ($categoryObj["success"]) {
-            $data["all_cart"] = $categoryObj["data"];
+        $cart = $this->session->userdata("cart");
+        if (!isset($cart) || $cart == null) {
+            $cart = [];
         }
 
-        $this->load->vars($data);
-        $this->load->view('main_page');
+        $data['products']  =  [];
+        $grandTotal = 0;
+
+        foreach ($cart as $key => $item_id) {
+            if ($item_id['product_id']) {
+                $item = $this->db->where('id', $item_id['product_id'])->get('product')->row_array();
+                $data['products'][$key]['product'] = $item;
+                $data['products'][$key]['product']['quantity'] = $item_id['quantity'];
+
+                // Calulating subtoal 
+                $subtotal = $item_id['quantity'] * $item['price'];
+
+                // assigning subtotal to calculate grand total
+                $data['products'][$key]['product']['total'] = $subtotal;
+                $grandTotal += $subtotal;
+            }
+        }
+
+        $data['grandTotal'] = $grandTotal;
+        return array("success" => true, "message" => "Success", "data" => $data);
     }
 }

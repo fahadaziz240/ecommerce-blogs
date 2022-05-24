@@ -3,7 +3,7 @@
      <div class="d-flex justify-content-between align-items-center;">
          <h2 class="mb-4">Products by Category</h2>
 
-         <a href="<?php echo base_url() . 'category' ?>">
+         <a href="<?php echo base_url('category/index')  ?>">
              <h5>View More</h5>
          </a>
      </div>

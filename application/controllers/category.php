@@ -1,5 +1,5 @@
 <?php
-class Category extends CI_Controller
+class category extends CI_Controller
 {
     function __construct()
     {
@@ -9,7 +9,7 @@ class Category extends CI_Controller
     }
     public function index()
     {
-        $data["filename"] = CONTENT . 'category';
+        $data["filename"] = CONTENT . 'category/index';
 
         $categoryObj = $this->category_model->get_category();
 
@@ -24,7 +24,7 @@ class Category extends CI_Controller
 
     public function products($cat_id)
     {
-        $data["filename"] = CONTENT . 'product';
+        $data["filename"] = CONTENT . 'product/index';
 
         $categoryObj = $this->product_model->get_products_by_category($cat_id);
 

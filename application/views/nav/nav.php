@@ -9,5 +9,16 @@
                 <a class="nav-link" href="<?= site_url() ?>">Home <span class="sr-only">(current)</span></a>
             </li>
         </ul>
+        <?php if (!isset($_SESSION['username']) && !isset($_SESSION['email'])) { ?>
+            <a href="<?php echo base_url('login') ?>" class="nav-link text-right">Login <i class="fa fa-angle-right"></i></a>
+            <a class="nav-link text-right" href="<?php echo base_url('register') ?>">Register</a>
+            <a class="nav-link text-right" href="<?php echo base_url() . 'cart' ?>">Cart</a>
+        <?php } ?>
+        <?php if (isset($_SESSION['username']) && isset($_SESSION['email'])) { ?>
+            <a href="<?php echo base_url('logout/index') ?>" class="nav-link text-right">Logout <i class="fa fa-angle-right"></i></a>
+            <a class="nav-link text-right" href="<?php echo base_url() . 'cart' ?>">Cart</a>
+        <?php } ?>
+
+
     </div>
 </nav>
